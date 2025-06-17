@@ -3,11 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+
     <!-- 로그인 필터 등록 -->
     <filter>
         <filter-name>LoginFilter</filter-name>
         <filter-class>com.koreait.mvc2.filter.LoginFilter</filter-class>
     </filter>
+
     <!-- 로그인 필터 적용 -->
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
@@ -21,4 +23,10 @@
         <filter-name>LoginFilter</filter-name>
         <url-pattern>/delete.member</url-pattern>
     </filter-mapping>
+
+    <!-- 시작 페이지 설정: localhost:8080 접속 시 list.board 실행 -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
 </web-app>

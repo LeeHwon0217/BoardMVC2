@@ -34,14 +34,11 @@ public class MemberController extends HttpServlet {
         String command = uri.substring(context.length());
 
         switch (command) {
-            case "/join.member":
-                req.getRequestDispatcher("/WEB-INF/views/join.jsp").forward(req, resp);
+            case "/loginSignin.member":
+                req.getRequestDispatcher("/WEB-INF/views/loginSignin.jsp").forward(req, resp);
                 break;
             case "/joinForm.member":
                 service.join(req, resp);
-                break;
-            case "/login.member":
-                req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
                 break;
             case "/loginForm.member":
                 service.login(req, resp);
@@ -51,6 +48,7 @@ public class MemberController extends HttpServlet {
                 break;
             case "/mypage.member":
                 req.getRequestDispatcher("/WEB-INF/views/mypage.jsp").forward(req, resp);
+                break;
             case "/modifyForm.member":
                 if(req.getMethod().equals("GET")){
                     req.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(req, resp);

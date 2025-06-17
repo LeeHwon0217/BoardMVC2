@@ -2,10 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="java.util.*, com.koreait.mvc2.dao.BoardDAO, com.koreait.mvc2.dto.BoardDTO" %>
-<%
-    com.koreait.mvc2.dto.MemberDTO user = (com.koreait.mvc2.dto.MemberDTO) session.getAttribute("user");
-    session.getAttribute("user");
-%>
+
 
 <!DOCTYPE HTML>
 <!--
@@ -134,15 +131,88 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
 
     <!-- Main -->
     <div id="main">
-        <article class="post">
-        <h2>${user.name}님 마이페이지</h2>
-        <form method="get" action="modifyForm.member">
-            <button type="submit">회원정보 수정</button>
-        </form>
-        <form method="post" action="delete.member" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-            <button type="submit">회원 탈퇴</button>
-        </form>
-        </article>
+        <h1>인기글</h1>
+        <c:forEach var="post" items="${boardList}">
+            <%
+                // 이미지 번호를 1~12 사이에서 랜덤하게 고르기
+                int random = (int) (Math.random() * 7) + 1;
+                String imagePath = "images/pic" + String.format("%02d", random) + ".jpg"; // pic01, pic02...
+            %>
+            <article class="post">
+                <header>
+                    <div class="title">
+                        <h2>
+                            <a href="specific.board?idx=${post.idx}">
+                                    ${fn:escapeXml(post.title)}
+                            </a>
+                        </h2>
+                        <p>
+                                ${fn:length(post.content) > 40 ? fn:substring(post.content, 0, 40) : post.content}...
+                        </p>
+                    </div>
+                    <div class="meta">
+                        <time class="published">${post.regdate}</time>
+                        <a href="#" class="author">
+                            <span class="name">${post.user_id}</span>
+                            <img src="images/avatar.jpg" alt="avatar" />
+                        </a>
+                    </div>
+                </header>
+                <a href="specific.board?idx=${post.idx}" class="image featured">
+                    <img src="<%= imagePath %>" alt="게시글 이미지" />
+                </a>
+                <p>
+                        ${fn:length(post.content) > 100 ? fn:substring(post.content, 0, 100) : post.content}...
+                </p>
+                <footer>
+                    <ul class="actions">
+                        <li>
+                            <a href="specific.board?idx=${post.idx}" class="button large">Continue Reading</a>
+                        </li>
+                    </ul>
+                    <ul class="stats">
+                        <li><a href="specific.board?idx=${post.idx}">조회수 ${post.view_count}</a></li>
+                    </ul>
+                </footer>
+            </article>
+        </c:forEach>
+
+
+
+        <%
+            Integer curPageAttr = (Integer) request.getAttribute("currentPage");
+            Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+
+            int currentPage = (curPageAttr != null) ? curPageAttr : 1;
+            int totalPages = (totalPagesAttr != null) ? totalPagesAttr : 1;
+
+            int startPage = Math.max(1, currentPage - 2);
+            int endPage = startPage + 4;
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPage", endPage);
+        %>
+
+
+        <ul class="actions pagination">
+            <c:if test="${currentPage > 1}">
+                <li><a href="popular.board?page=${currentPage - 1}" class="button large previous">Previous Page</a></li>
+            </c:if>
+            <c:forEach begin="1" end="${totalPages}" var="i">
+                <li>
+                    <a href="popular.board?page=${i}" class="button <c:if test='${i == currentPage}'>primary</c:if>'">${i}</a>
+                </li>
+            </c:forEach>
+            <c:if test="${currentPage < totalPages}">
+                <li><a href="popular.board?page=${currentPage + 1}" class="button large next">Next Page</a></li>
+            </c:if>
+        </ul>
+
+
     </div>
 
     <!-- Sidebar -->

@@ -1,0 +1,64 @@
+/* header.css - 메뉴 및 검색창 관련 스타일만 분리 */
+@import url(fontawesome-all.min.css);
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Raleway:400,800,900");
+
+/* Basic */
+
+@-ms-viewport {
+    width: device-width;
+}
+
+body {
+    -ms-overflow-style: scrollbar;
+}
+
+@media screen and (max-width: 480px) {
+
+    html, body {
+        min-width: 320px;
+    }
+
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    background: #f4f4f4;
+}
+
+#menu {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: #222;
+    color: #fff;
+    z-index: 1000;
+}
+
+body.is-menu-visible #menu {
+    display: block;
+}
+
+#search {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 1001;
+    padding: 0.5rem;
+}
+
+#search.visible {
+    display: block;
+}

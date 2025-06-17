@@ -68,7 +68,7 @@ public class MemberDAO {
 
     public boolean updateMember(MemberDTO dto) {
         String sql = """
-                update member set name=?, hp=?, email=?, gender=?, zipcode=?, address1=?, address2=?, address3=?
+                update member set name=?, hp=?, email=?, zipcode=?, address1=?, address2=?, address3=?
                 where userid=?
                 """;
 
@@ -77,12 +77,11 @@ public class MemberDAO {
             pstmt.setString(1, dto.getName());
             pstmt.setString(2, dto.getHp());
             pstmt.setString(3, dto.getEmail());
-            pstmt.setString(4, dto.getGender());
-            pstmt.setString(5, dto.getZipcode());
-            pstmt.setString(6, dto.getAddress1());
-            pstmt.setString(7, dto.getAddress2());
-            pstmt.setString(8, dto.getAddress3());
-            pstmt.setString(9, dto.getUserid());
+            pstmt.setString(4, dto.getZipcode());
+            pstmt.setString(5, dto.getAddress1());
+            pstmt.setString(6, dto.getAddress2());
+            pstmt.setString(7, dto.getAddress3());
+            pstmt.setString(8, dto.getUserid());
             return pstmt.executeUpdate() == 1;
         }catch (Exception e){
             e.printStackTrace();

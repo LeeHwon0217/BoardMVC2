@@ -2,10 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="java.util.*, com.koreait.mvc2.dao.BoardDAO, com.koreait.mvc2.dto.BoardDTO" %>
-<%
-    com.koreait.mvc2.dto.MemberDTO user = (com.koreait.mvc2.dto.MemberDTO) session.getAttribute("user");
-    session.getAttribute("user");
-%>
+
 
 <!DOCTYPE HTML>
 <!--
@@ -94,7 +91,7 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
                     </a>
                 </li>
                 <li>
-                    <a href="myBoard.board">
+                    <a href="myboard.board">
                         <h3>내 글</h3>
                         <p>내가 작성한 게시글을 확인할 수 있어요</p>
                     </a>
@@ -134,15 +131,110 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
 
     <!-- Main -->
     <div id="main">
-        <article class="post">
-        <h2>${user.name}님 마이페이지</h2>
-        <form method="get" action="modifyForm.member">
-            <button type="submit">회원정보 수정</button>
-        </form>
-        <form method="post" action="delete.member" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-            <button type="submit">회원 탈퇴</button>
-        </form>
-        </article>
+
+        <h1>내글보기</h1>
+        <c:forEach var="post" items="${myList}">
+            <%
+                // 이미지 번호를 1~12 사이에서 랜덤하게 고르기
+                int random = (int) (Math.random() * 7) + 1;
+                String imagePath = "images/pic" + String.format("%02d", random) + ".jpg"; // pic01, pic02...
+            %>
+            <article class="post">
+                <header>
+                    <div class="title">
+                        <h2>
+                            <a href="specific.board?idx=${post.idx}">
+                                    ${fn:escapeXml(post.title)}
+                            </a>
+                        </h2>
+                        <p>
+                                ${fn:length(post.content) > 40 ? fn:substring(post.content, 0, 40) : post.content}...
+                        </p>
+                    </div>
+                    <div class="meta">
+                        <time class="published">${post.regdate}</time>
+                        <a href="#" class="author">
+                            <span class="name">${post.user_id}</span>
+                            <img src="images/avatar.jpg" alt="avatar" />
+                        </a>
+                    </div>
+                </header>
+                <a href="specific.board?idx=${post.idx}" class="image featured">
+                    <img src="<%= imagePath %>" alt="게시글 이미지" />
+                </a>
+                <p>
+                        ${fn:length(post.content) > 100 ? fn:substring(post.content, 0, 100) : post.content}...
+                </p>
+                <footer>
+                    <ul class="actions">
+                        <li>
+                            <a href="specific.board?idx=${post.idx}" class="button large">Continue Reading</a>
+                        </li>
+                    </ul>
+                    <ul class="stats">
+                        <li><a href="specific.board?idx=${post.idx}">조회수 ${post.view_count}</a></li>
+                    </ul>
+                </footer>
+            </article>
+        </c:forEach>
+
+
+
+        <%
+            Integer curPageAttr = (Integer) request.getAttribute("currentPage");
+            Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+
+            int currentPage = (curPageAttr != null) ? curPageAttr : 1;
+            int totalPages = (totalPagesAttr != null) ? totalPagesAttr : 1;
+
+            int startPage = Math.max(1, currentPage - 2);
+            int endPage = startPage + 4;
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPage", endPage);
+        %>
+
+
+        <ul class="actions pagination">
+            <!-- 이전 버튼 -->
+            <c:choose>
+                <c:when test="${currentPage > 1}">
+                    <li><a href="myBoard.board?page=${currentPage - 1}" class="button large previous">Previous Page</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><span class="disabled button large previous">Previous Page</span></li>
+                </c:otherwise>
+            </c:choose>
+
+            <!-- 숫자 페이지 목록 (최대 5개) -->
+            <c:forEach var="i" begin="${startPage}" end="${endPage}">
+                <li>
+                    <a href="myBoard.board?page=${i}"
+                       class="button <c:if test='${i == currentPage}'>primary</c:if>">
+                            ${i}
+                    </a>
+                </li>
+            </c:forEach>
+
+            <!-- 다음 버튼 -->
+            <c:choose>
+                <c:when test="${currentPage < totalPages}">
+                    <li><a href="myBoard.board?page=${currentPage + 1}" class="button large next">Next Page</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><span class="disabled button large next">Next Page</span></li>
+                </c:otherwise>
+            </c:choose>
+        </ul>
+
+
+
+
+
     </div>
 
     <!-- Sidebar -->
@@ -266,7 +358,7 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
                 이 게시판은 그런 평범한 조각들을 모아 서로 나누고 공감하는 공간입니다.<br>
                 우리는 서로를 잘 몰라도, 서로의 이야기를 듣고 마음을 나눌 수 있다고 믿습니다.<br><br>
                 특별한 주제도, 복잡한 절차도 없습니다.<br>
-                당신이 쓰는 글 한 줄이 곧 이 공간의 풍경이 됩니다.<br><br>
+                당신이 쓰는 글 한 줄, 사진 한 장이 곧 이 공간의 풍경이 됩니다.<br><br>
                 바쁜 일상 속에서 잠시 멈춰 쉬어가고 싶을 때,<br>
                 누군가에게 말 걸고 싶을 때,<br>
                 혹은 그냥, 오늘 하루가 어땠는지 기록해두고 싶을 때,<br>
@@ -281,9 +373,9 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
         <!-- Footer -->
         <section id="footer">
             <ul class="icons">
-                <li><a href="https://x.com/home?lang=ko" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                <li><a href="https://www.facebook.com/MetaKorea/?locale=ko_KR" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                <li><a href="https://www.instagram.com/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
                 <li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
                 <li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
             </ul>

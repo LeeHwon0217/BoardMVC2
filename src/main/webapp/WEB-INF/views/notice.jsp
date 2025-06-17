@@ -2,10 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="java.util.*, com.koreait.mvc2.dao.BoardDAO, com.koreait.mvc2.dto.BoardDTO" %>
-<%
-    com.koreait.mvc2.dto.MemberDTO user = (com.koreait.mvc2.dto.MemberDTO) session.getAttribute("user");
-    session.getAttribute("user");
-%>
+
 
 <!DOCTYPE HTML>
 <!--
@@ -134,15 +131,94 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
 
     <!-- Main -->
     <div id="main">
-        <article class="post">
-        <h2>${user.name}님 마이페이지</h2>
-        <form method="get" action="modifyForm.member">
-            <button type="submit">회원정보 수정</button>
-        </form>
-        <form method="post" action="delete.member" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-            <button type="submit">회원 탈퇴</button>
-        </form>
-        </article>
+        <h2>공지사항</h2>
+        <c:forEach var="post" items="${boardList}">
+            <%
+                // 이미지 번호를 1~12 사이에서 랜덤하게 고르기
+                int random = (int) (Math.random() * 12) + 1;
+                String imagePath = "images/pic" + String.format("%02d", random) + ".jpg"; // pic01, pic02...
+            %>
+            <article class="post">
+                <header>
+                    <div class="title">
+                        <h2>
+                            <a href="specific.notice?idx=${post.idx}">
+                                    ${fn:escapeXml(post.title)}
+                            </a>
+                        </h2>
+                    </div>
+                    <div class="meta">
+                        <time class="published">${post.regdate}</time>
+                        <span class="author">
+                    <span class="name">${post.user_id}</span>
+                </span>
+                    </div>
+                </header>
+                <p style="margin-top: 10px;">
+                        ${fn:length(post.content) > 120 ? fn:substring(post.content, 0, 120) : post.content}...
+                </p>
+                <footer>
+                    <ul class="stats">
+                        <li>조회수 ${post.view_count}</li>
+                    </ul>
+                </footer>
+            </article>
+        </c:forEach>
+
+
+
+
+        <%
+            Integer curPageAttr = (Integer) request.getAttribute("currentPage");
+            Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+
+            int currentPage = (curPageAttr != null) ? curPageAttr : 1;
+            int totalPages = (totalPagesAttr != null) ? totalPagesAttr : 1;
+
+            int startPage = Math.max(1, currentPage - 2);
+            int endPage = startPage + 4;
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            request.setAttribute("startPage", startPage);
+            request.setAttribute("endPage", endPage);
+        %>
+
+
+        <ul class="actions pagination">
+            <!-- 이전 버튼 -->
+            <c:choose>
+                <c:when test="${currentPage > 1}">
+                    <li><a href="list.board?page=${currentPage - 1}" class="button large previous">Previous Page</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><span class="disabled button large previous">Previous Page</span></li>
+                </c:otherwise>
+            </c:choose>
+
+            <!-- 숫자 페이지 목록 (최대 5개) -->
+            <c:forEach var="i" begin="${startPage}" end="${endPage}">
+                <li>
+                    <a href="list.board?page=${i}"
+                       class="button <c:if test='${i == currentPage}'>primary</c:if>">
+                            ${i}
+                    </a>
+                </li>
+            </c:forEach>
+
+            <!-- 다음 버튼 -->
+            <c:choose>
+                <c:when test="${currentPage < totalPages}">
+                    <li><a href="list.board?page=${currentPage + 1}" class="button large next">Next Page</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><span class="disabled button large next">Next Page</span></li>
+                </c:otherwise>
+            </c:choose>
+        </ul>
+
     </div>
 
     <!-- Sidebar -->
@@ -203,6 +279,7 @@ Free for personal and commercial use under the CCA 3.0 license (html5up.net/lice
 
             </div>
         </section>
+
 
         <!-- Posts List -->
         <section>

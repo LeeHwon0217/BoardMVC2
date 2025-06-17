@@ -1,27 +1,54 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: 훤
+  Date: 2025-06-14
+  Time: 오후 8:23
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     com.koreait.mvc2.dto.MemberDTO user = (com.koreait.mvc2.dto.MemberDTO) session.getAttribute("user");
 %>
 <html>
 <head>
-    <title>Title</title>
+    <title>회원정보 수정</title>
+    <link rel="stylesheet" href="assets/css/loginSignin.css" />
+    <link rel="stylesheet" href="assets/css/header.css"/>
 </head>
 <body>
-<h2>회원정보 수정</h2>
-<form method="post" action="modifyForm.member">
-    <p>아이디: ${user.userid}</p>
-    <p>이름: <input type="text" name="name" value="${user.name}"></p>
-    <p>휴대폰: <input type="text" name="hp" value="${user.hp}"></p>
-    <p>이메일: <input type="email" name="email" value="${user.email}"></p>
-    <p>성별: <select name="gender">
-        <option ${user.gender == "남자" ? "selected" : ""} value="남자">남자</option>
-        <option ${user.gender == "여자" ? "selected" : ""} value="여자">여자</option>
-    </select></p>
-    <p>우편번호: <input type="text" name="zipcode" value="${user.zipcode}"></p>
-    <p>주소: <input type="text" name="address1" value="${user.address1}"></p>
-    <p>상세주소: <input type="text" name="address2" value="${user.address2}"></p>
-    <p>참고항목: <input type="text" name="address3" value="${user.address3}"></p>
-    <p><button type="submit">완료</button></p>
-</form>
+<%--<%@ include file="header.jsp" %>--%>
+
+<div class="container right-panel-active">
+    <!-- Sign Up -->
+    <div class="container__form container--signup">
+        <form method="post" action="modifyForm.member" class="form" id="form1">
+            <h2 class="form__title">회원정보 수정</h2>
+            <input type="text" placeholder="아이디" class="input" name="userid" value="${user.userid}"/>
+            <input type="password" placeholder="비밀번호" class="input" name="userpw" value="${user.userpw}"/>
+            <input type="text" placeholder="이름" class="input" name="name" value="${user.name}"/>
+            <input type="text" placeholder="휴대폰" class="input" name="hp" value="${user.hp}"/>
+            <input type="email" placeholder="이메일" class="input" name="email" value="${user.email}"/>
+            <input type="text" placeholder="우편번호" class="input" name="zipcode" value="${user.zipcode}"/>
+            <input type="text" placeholder="주소" class="input" name="address1" value="${user.address1}"/>
+            <input type="text" placeholder="상세주소" class="input" name="address2" value="${user.address2}"/>
+            <input type="text" placeholder="참고항목" class="input" name="address3" value="${user.address3}"/>
+            <button class="btn" type="submit">완료</button>
+        </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="container__overlay">
+        <div class="overlay">
+            <div class="overlay__panel overlay--left">
+
+            </div>
+            <div class="overlay__panel overlay--right">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="assets/js/loginSignin.js"></script>
+<script src="assets/js/header.js"></script>
 </body>
 </html>

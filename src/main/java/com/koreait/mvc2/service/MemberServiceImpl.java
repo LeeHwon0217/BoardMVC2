@@ -41,15 +41,20 @@ public class MemberServiceImpl implements MemberService {
         MemberDTO dto = dao.login(userid, userpw);
         if (dto != null) {
             req.getSession().setAttribute("user", dto);
-            req.setAttribute("loginUser", dto);
+            // 로그인 성공 시 게시글 목록을 불러오는 list.board로 리다이렉트
+            resp.sendRedirect("list.board");
+        } else {
+            // 로그인 실패 시 로그인 페이지로 다시 이동
+            req.setAttribute("loginFailed", true);
+            req.getRequestDispatcher("/WEB-INF/views/loginSignin.jsp").forward(req, resp);
         }
-        req.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(req, resp);
     }
+
 
     @Override
     public void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
-        resp.sendRedirect("login.member");
+        resp.sendRedirect("loginSignin.member");
     }
 
 
@@ -82,6 +87,6 @@ public class MemberServiceImpl implements MemberService {
             dao.deleteMember(sessionDTO.getUserid());
             req.getSession().invalidate();
         }
-        resp.sendRedirect("login.member");
+        resp.sendRedirect("loginSignin.member");
     }
 }
